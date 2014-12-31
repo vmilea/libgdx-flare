@@ -22,6 +22,7 @@ import java.util.Comparator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.vmilea.util.ArgCheck;
 import com.vmilea.util.Assert;
 
 // Pool replacement with better stat tracking
@@ -81,11 +82,11 @@ public abstract class AltPool<T extends Poolable> extends com.badlogic.gdx.utils
 
 		registeredPools.add(this);
 	}
-	
+
 	public Class<?> getPooledType() {
 		return pooledType;
 	}
-	
+
 	public void reserve(int capacity) {
 		while (freeObjects.size() < capacity)
 			freeObjects.addFirst(newObject());
@@ -115,13 +116,11 @@ public abstract class AltPool<T extends Poolable> extends com.badlogic.gdx.utils
 				Object pool = poolItem.getPool();
 
 				if (pool == null) {
-					Assert.check(false, String.format(
-							"can't break away object of type '%s', it's not attached to any pool",
-							object.getClass().getSimpleName()));
+					ArgCheck.fail("Can't break away object of type '%s', it's not attached to any pool",
+							object.getClass().getSimpleName());
 				} else if (pool != this) {
-					Assert.check(false, String.format(
-							"can't break away object of type '%s', it's from a different pool",
-							object.getClass().getSimpleName()));
+					ArgCheck.fail("Can't break away object of type '%s', it's from a different pool",
+							object.getClass().getSimpleName());
 				}
 
 				poolItem.setPool(null);
@@ -155,13 +154,11 @@ public abstract class AltPool<T extends Poolable> extends com.badlogic.gdx.utils
 				Object pool = poolItem.getPool();
 
 				if (pool == null) {
-					Assert.check(false, String.format(
-							"can't recycle object of type '%s', already returned to pool",
-							object.getClass().getSimpleName()));
+					ArgCheck.fail("Can't recycle object of type '%s', already returned to pool",
+							object.getClass().getSimpleName());
 				} else if (pool != this) {
-					Assert.check(false, String.format(
-							"can't recycle object of type '%s', it's from a different pool",
-							object.getClass().getSimpleName()));
+					ArgCheck.fail("Can't recycle object of type '%s', it's from a different pool",
+							object.getClass().getSimpleName());
 				}
 
 				poolItem.setPool(null);

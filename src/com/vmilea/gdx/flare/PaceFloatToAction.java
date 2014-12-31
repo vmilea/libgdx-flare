@@ -19,6 +19,8 @@ package com.vmilea.gdx.flare;
 import com.vmilea.gdx.flare.actor.FloatActorProperty;
 import com.vmilea.gdx.pool.AltPool;
 import com.vmilea.util.Assert;
+import com.vmilea.util.ArgCheck;
+import com.vmilea.util.StateCheck;
 
 public final class PaceFloatToAction extends AbstractAction {
 
@@ -32,7 +34,7 @@ public final class PaceFloatToAction extends AbstractAction {
 	PaceFloatToAction() { } // internal
 
 	public static PaceFloatToAction obtain(FloatActorProperty property, float value1, float speed) {
-		Assert.check(speed >= 0, "Speed may not be negative");
+		ArgCheck.check(speed >= 0, "Speed may not be negative");
 
 		PaceFloatToAction obj = pool.obtain();
 		obj.property = property;
@@ -46,7 +48,7 @@ public final class PaceFloatToAction extends AbstractAction {
 	}
 
 	public void setSpeed(float scale) {
-		Assert.check(speed >= 0, "Speed may not be negative");
+		ArgCheck.check(speed >= 0, "Speed may not be negative");
 
 		this.speed = scale;
 	}
@@ -67,7 +69,7 @@ public final class PaceFloatToAction extends AbstractAction {
 
 	@Override
 	public float getDuration() {
-		Assert.check(isPinned, "PaceFloatToAction can't estimate duration unless pinned");
+		StateCheck.check(isPinned, "PaceFloatToAction can't estimate duration unless pinned");
 
 		// estimate based on current speed
 		float delta = Math.abs(property.get(target) - value1);

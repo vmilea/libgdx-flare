@@ -53,7 +53,8 @@ public abstract class AbstractTweenAction extends AbstractAction {
 
 	@Override
 	public AbstractTweenAction reversed() {
-		throw new UnsupportedOperationException("not implemented");
+		Assert.fail("All tween actions should be reversible");
+		return null;
 	}
 
 	@Override

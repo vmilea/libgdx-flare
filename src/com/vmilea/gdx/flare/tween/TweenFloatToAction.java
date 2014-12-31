@@ -20,6 +20,7 @@ import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.flare.actor.FloatActorProperty;
 import com.vmilea.gdx.pool.AltPool;
 import com.vmilea.util.Assert;
+import com.vmilea.util.StateCheck;
 
 public class TweenFloatToAction extends AbstractTweenAction {
 
@@ -64,8 +65,7 @@ public class TweenFloatToAction extends AbstractTweenAction {
 	@Override
 	public TweenFloatToAction reversed() {
 		if (!isReversible())
-			throw new UnsupportedOperationException(
-					getClass().getSimpleName() + " can't be reversed unless pinned");
+			StateCheck.fail("%s can't be reversed unless pinned", getClass().getSimpleName());
 
 		TweenFloatToAction action = obtain(property, value0, duration);
 		action.ease(easing.reversed());

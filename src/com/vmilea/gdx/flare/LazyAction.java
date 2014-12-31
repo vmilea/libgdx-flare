@@ -55,18 +55,18 @@ public final class LazyAction extends AbstractAction {
 
 	@Override
 	public void restore() {
-		Assert.check(action == null);
-		
 		super.restore();
+
+		Assert.check(action == null);
 	}
 
 	@Override
 	public void pin() {
 		Assert.check(!isPinned);
 		Assert.check(action == null);
-		
+
 		action = generator.call(data);
-		// keep the action's target, start it on our actor 
+		// keep the action's target, start it on our actor
 		action.setActor(getActor());
 		action.restart();
 

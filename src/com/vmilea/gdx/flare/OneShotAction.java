@@ -53,9 +53,10 @@ public final class OneShotAction extends AbstractAction {
 	
 	@Override
 	public void restore() {
-		Assert.check(delegate != null, "OneShotAction may not be restarted");
-		
-		super.restore();	
+		if (delegate == null)
+			throw new UnsupportedOperationException("OneShotAction may not be restarted");
+
+		super.restore();
 	}
 	
 	@Override

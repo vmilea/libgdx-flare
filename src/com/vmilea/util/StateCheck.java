@@ -16,31 +16,20 @@
 
 package com.vmilea.util;
 
-// Library consistency checks. No recovery expected.
+// Check if user has requested an operation while in an illegal state. No recovery expected.
 //
-public final class Assert {
+public final class StateCheck {
 
-	public static class AssertFailed extends RuntimeException {
-		private static final long serialVersionUID = 1L;
-
-		public AssertFailed() {
-		}
-
-		public AssertFailed(String message) {
-			super(message);
-		}
-	}
-
-	public static void check(boolean condition) {
+	public static void check(boolean condition, String message) {
 		if (!condition) {
-			throw new AssertFailed();
+			throw new IllegalStateException(message);
 		}
 	}
 
 	public static void fail(String format, Object... args) {
-		throw new AssertFailed(String.format(format, args));
+		throw new IllegalArgumentException(String.format(format, args));
 	}
 
-	private Assert() { // sealed
+	private StateCheck() { // sealed
 	}
 }

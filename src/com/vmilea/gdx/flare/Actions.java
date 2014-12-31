@@ -68,6 +68,10 @@ public final class Actions {
 		return DelayAction.obtain(duration);
 	}
 
+	public static DelayAction nothing() {
+		return delay(0);
+	}
+
 	// tween padding
 	//
 
@@ -512,7 +516,7 @@ public final class Actions {
 	// private members
 	//
 
-	private Actions() {
+	private Actions() { // sealed
 	}
 
 	private static final Color color0 = new Color();
@@ -531,12 +535,12 @@ public final class Actions {
 		@Override
 		public void run(Actor actor, Object data) {
 			float angle = actor.getRotation();
-			
+
 			while (angle <= -180)
 				angle += 360;
 			while (angle >= 180)
 				angle -= 360;
-			
+
 			actor.setRotation(angle);
 		}
 	};

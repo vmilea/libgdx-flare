@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.vmilea.gdx.flare.AbstractAction;
 import com.vmilea.gdx.flare.Actions.Delegate;
+import com.vmilea.util.ArgCheck;
 import com.vmilea.util.Assert;
 
 public class Animator<T extends Enum<T>> {
@@ -34,7 +35,8 @@ public class Animator<T extends Enum<T>> {
 	}
 
 	public void start(T actionId, AbstractAction action, Actor actor) {
-		Assert.check(actor != null);
+		ArgCheck.check(action != null, "Invalid action");
+		ArgCheck.check(actor != null, "Invalid actor");
 
 		stop(actionId);
 

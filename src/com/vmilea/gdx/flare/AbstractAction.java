@@ -18,7 +18,9 @@ package com.vmilea.gdx.flare;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.vmilea.gdx.pool.PoolItem;
+import com.vmilea.util.ArgCheck;
 import com.vmilea.util.Assert;
+import com.vmilea.util.StateCheck;
 
 public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Action implements PoolItem {
 
@@ -67,8 +69,10 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 	}
 
 	public AbstractAction startOn(Actor actor) {
-		Assert.check(this.actor == null);
-		Assert.check(isDone);
+		if (this.actor != null)
+			ArgCheck.fail("%s already bound to an actor", getClass().getSimpleName());
+		if (!isDone)
+			StateCheck.fail("%s is already running", getClass().getSimpleName());
 
 		actor.addAction(this);
 		restart();
@@ -107,7 +111,8 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 	}
 
 	protected void restore() {
-		Assert.check(isDone, "May not restart action while it is running");
+		if (!isDone)
+			StateCheck.fail("May not restart %s while it is running", getClass().getSimpleName());
 
 		isDone = false;
 		isPinned = false; // _don't_ keep isPinned
@@ -119,16 +124,16 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 
 	protected float run(float dt) {
 		if (isDone)
-			Assert.check(false, String.format("action %s can't act() because it's finished!", toString()));
+			Assert.fail("Action %s can't act() because it's finished!", toString());
 		if (!isPinned)
-			Assert.check(false, String.format("action %s can't act() because it's not pinned!", toString()));
+			Assert.fail("Action %s can't act() because it's not pinned!", toString());
 
 		int incarnation = poolItemIncarnation;
 		float excessDt = doRun(dt);
 
 		if (incarnation != poolItemIncarnation) {
 			if (!supportsRemoveWhileRunning())
-				Assert.check(false, String.format("action %s was removed while running!", toString()));
+				Assert.fail("Action %s was removed while running!", toString());
 			return -1;
 		} else {
 			Assert.check(excessDt == 0 || isDone); // (excessDt > 0) implies isDone

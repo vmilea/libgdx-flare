@@ -18,15 +18,15 @@ package com.vmilea.gdx.flare;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
-import com.vmilea.util.Assert;
+import com.vmilea.util.ArgCheck;
 
 public abstract class AbstractGroupAction extends AbstractAction {
 
 	protected final Array<AbstractAction> actions = new Array<AbstractAction>(true, 8);
 
 	public AbstractGroupAction add(AbstractAction action) {
-		Assert.check(isDone, "May not be add actions to a " + getClass().getSimpleName() + " while it's running");
-		Assert.check(action != null, "Action may not be null");
+		ArgCheck.check(isDone, "May not be add actions to a group while it is running");
+		ArgCheck.check(action != null, "Action may not be null");
 
 		actions.add(action);
 		return this;

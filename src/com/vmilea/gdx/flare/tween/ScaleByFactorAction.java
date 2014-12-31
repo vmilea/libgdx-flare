@@ -19,21 +19,21 @@ package com.vmilea.gdx.flare.tween;
 import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.pool.AltPool;
 import com.vmilea.util.Assert;
+import com.vmilea.util.ArgCheck;
 
 public final class ScaleByFactorAction extends AbstractTweenAction {
 
 	private float xFactor, yFactor;
 	private float scaleX0 = Float.NaN, scaleY0 = Float.NaN;
 	private float deltaScaleX, deltaScaleY;
-	
+
 	public static final AltPool<ScaleByFactorAction> pool = ActionPool.make(ScaleByFactorAction.class);
-	
-	ScaleByFactorAction () { } // internal
-	
+
+	ScaleByFactorAction() { } // internal
+
 	public static ScaleByFactorAction obtain(float xFactor, float yFactor, float duration) {
-		if (xFactor < 0 || yFactor < 0)
-			throw new IllegalArgumentException("factor must be positive");
-		
+		ArgCheck.check(xFactor >= 0 && yFactor >= 0, "Factor may not be negative");
+
 		ScaleByFactorAction obj = pool.obtain();
 		obj.xFactor = xFactor;
 		obj.yFactor = yFactor;
@@ -49,37 +49,37 @@ public final class ScaleByFactorAction extends AbstractTweenAction {
 		scaleY0 = Float.NaN;
 		deltaScaleX = deltaScaleY = 0;
 	}
-	
+
 	@Override
 	public void restore() {
 		super.restore();
 		scaleX0 = Float.NaN;
 		scaleY0 = Float.NaN;
 	}
-	
+
 	@Override
 	public boolean isReversible() {
 		return true;
 	}
-	
+
 	@Override
 	public ScaleByFactorAction reversed() {
 		ScaleByFactorAction action = obtain(1 / xFactor, 1 / yFactor, duration);
 		action.ease(easing.reversed());
 		return action;
 	}
-	
+
 	@Override
 	public void pin() {
 		Assert.check(!isPinned);
-		
+
 		scaleX0 = target.getScaleX();
 		scaleY0 = target.getScaleY();
 		deltaScaleX = scaleX0 * (xFactor - 1);
 		deltaScaleY = scaleY0 * (yFactor - 1);
 		isPinned = true;
 	}
-	
+
 	@Override
 	protected void applyRatio(float ratio) {
 		target.setScale(

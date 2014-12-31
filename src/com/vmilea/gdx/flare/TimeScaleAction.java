@@ -17,19 +17,19 @@
 package com.vmilea.gdx.flare;
 
 import com.vmilea.gdx.pool.AltPool;
+import com.vmilea.util.ArgCheck;
 
 public final class TimeScaleAction extends AbstractWrapperAction {
 
 	private float scale;
-	
+
 	public static final AltPool<TimeScaleAction> pool = ActionPool.make(TimeScaleAction.class);
-	
-	TimeScaleAction () { } // internal
-	
+
+	TimeScaleAction() { } // internal
+
 	public static TimeScaleAction obtain(AbstractAction action, float scale) {
-		if (scale <= 0)
-			throw new IllegalArgumentException("Scale must be positive");
-		
+		ArgCheck.check(scale >= 0, "Scale may not be negative");
+
 		TimeScaleAction obj = pool.obtain();
 		obj.action = action;
 		obj.scale = scale;
@@ -41,22 +41,24 @@ public final class TimeScaleAction extends AbstractWrapperAction {
 	}
 
 	public void setTimeScale(float scale) {
+		ArgCheck.check(scale >= 0, "Scale may not be negative");
+
 		this.scale = scale;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		scale = 0;
 	}
-	
+
 	@Override
 	public float getDuration() {
 		// estimate based on current time scale
 		return scale * action.getDuration();
 	}
-	
+
 	@Override
 	protected float doRun(float dt) {
 		if (scale == 0) {
@@ -65,10 +67,10 @@ public final class TimeScaleAction extends AbstractWrapperAction {
 		} else {
 			dt = action.run(dt * scale) / scale;
 		}
-		
+
 		if (action.isDone())
 			isDone = true;
-		
+
 		return dt;
 	}
 }

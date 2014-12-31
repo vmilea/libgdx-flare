@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Constructor;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
-import com.vmilea.util.Assert;
+import com.vmilea.util.ArgCheck;
 
 public class AltReflectionPool<T extends Poolable> extends AltPool<T> {
 
@@ -42,8 +42,7 @@ public class AltReflectionPool<T extends Poolable> extends AltPool<T> {
 		try {
 			return (T) constructor.newInstance((Object[]) null);
 		} catch (ReflectionException e) {
-			Assert.check(false, String.format("failed to create new instance of %s",
-					constructor.getDeclaringClass().getSimpleName()));
+			ArgCheck.fail("Failed to create new instance of %s", constructor.getDeclaringClass().getSimpleName());
 			return null;
 		}
 	}
@@ -58,7 +57,7 @@ public class AltReflectionPool<T extends Poolable> extends AltPool<T> {
 				constructor = ClassReflection.getDeclaredConstructor(pooledType, (Class[]) null);
 				constructor.setAccessible(true);
 			} catch (ReflectionException re) {
-				Assert.check(false);
+				ArgCheck.fail("Default constructor for %s is not accessible", pooledType.getSimpleName());
 			}
 		}
 		
