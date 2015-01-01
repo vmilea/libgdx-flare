@@ -146,6 +146,11 @@ public abstract class AltPool<T extends Poolable> extends com.badlogic.gdx.utils
 		return object;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <R extends T> R obtainAs() {
+		return (R) obtain();
+	}
+
 	@Override
 	public synchronized void free(T object) {
 		if (object != null) {

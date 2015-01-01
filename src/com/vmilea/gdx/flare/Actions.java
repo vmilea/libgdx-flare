@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.Predicate;
 import com.vmilea.gdx.flare.actor.ActorProperties;
 import com.vmilea.gdx.flare.actor.FloatActorProperty;
 import com.vmilea.gdx.flare.actor.FloatPairActorProperty;
@@ -70,6 +71,14 @@ public final class Actions {
 
 	public static DelayAction nothing() {
 		return delay(0);
+	}
+
+	public static <T> DelayUntilAction<T> delayUntil(Predicate<T> predicate, T argument) {
+		return DelayUntilAction.obtain(predicate, argument);
+	}
+
+	public static DelayUntilAction<Void> delayUntil(Predicate<Void> predicate) {
+		return DelayUntilAction.obtain(predicate, null);
 	}
 
 	// tween padding

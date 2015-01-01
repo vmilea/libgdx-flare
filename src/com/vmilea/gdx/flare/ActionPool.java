@@ -35,12 +35,14 @@ public class ActionPool<T extends AbstractAction> extends AltReflectionPool<T> {
 		ActionPool.listener = listener;
 	}
 	
-	public static <T extends AbstractAction> ActionPool<T> make(Class<T> pooledType) {
+	public static <T extends AbstractAction> ActionPool<T> make(Class<? super T> pooledType) {
 		return make(pooledType, DEFAULT_ACTION_POOL_CAPACITY);
 	}
 
-	public static <T extends AbstractAction> ActionPool<T> make(Class<T> pooledType, int initialCapacity) {
-		return new ActionPool<T>(pooledType, initialCapacity);
+	@SuppressWarnings("unchecked")
+	public static <T extends AbstractAction> ActionPool<T> make(Class<? super T> pooledType, int initialCapacity) {
+		// class type must be T; it is declared super of T for convenience when pooling generic types
+		return new ActionPool<T>((Class<T>) pooledType, initialCapacity);
 	}
 
 	private ActionPool(Class<T> pooledType, int initialCapacity) {
