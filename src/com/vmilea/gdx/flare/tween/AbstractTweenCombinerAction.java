@@ -34,11 +34,13 @@ public abstract class AbstractTweenCombinerAction extends AbstractTweenAction { 
 	}
 
 	@Override
-	public void setTarget(Actor target) {
-		super.setTarget(target);
+	public void setTarget(Actor target, boolean replaceSubactionsTarget) {
+		super.setTarget(target, replaceSubactionsTarget);
 
-		action1.setTarget(target);
-		action2.setTarget(target);
+		if (action1.getTarget() == null || replaceSubactionsTarget)
+			action1.setTarget(target, replaceSubactionsTarget);
+		if (action2.getTarget() == null || replaceSubactionsTarget)
+			action2.setTarget(target, replaceSubactionsTarget);
 	}
 
 	@Override

@@ -63,6 +63,15 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 		return isDone;
 	}
 
+	@Override
+	public void setTarget(Actor target) {
+		setTarget(target, false);
+	}
+
+	public void setTarget(Actor target, boolean replaceSubactionsTarget) {
+		this.target = target;
+	}
+
 	public AbstractAction target(Actor target) {
 		setTarget(target);
 		return this;

@@ -34,10 +34,11 @@ abstract class AbstractWrapperAction extends AbstractAction { // internal
 	}
 
 	@Override
-	public void setTarget(Actor target) {
-		super.setTarget(target);
+	public void setTarget(Actor target, boolean replaceSubactionsTarget) {
+		super.setTarget(target, replaceSubactionsTarget);
 
-		action.setTarget(target);
+		if (action.getTarget() == null || replaceSubactionsTarget)
+			action.setTarget(target, replaceSubactionsTarget);
 	}
 
 	@Override

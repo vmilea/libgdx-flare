@@ -51,11 +51,12 @@ public abstract class AbstractGroupAction extends AbstractAction {
 	}
 
 	@Override
-	public void setTarget(Actor target) {
-		super.setTarget(target);
+	public void setTarget(Actor target, boolean replaceSubactionsTarget) {
+		super.setTarget(target, replaceSubactionsTarget);
 
 		for (AbstractAction action : actions) {
-			action.setTarget(target);
+			if (action.getTarget() == null || replaceSubactionsTarget)
+				action.setTarget(target, replaceSubactionsTarget);
 		}
 	}
 
