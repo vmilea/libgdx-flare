@@ -19,19 +19,18 @@ package com.vmilea.gdx.flare.tween;
 import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.flare.Actions;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 
 public final class TweenParallelAction extends AbstractTweenCombinerAction {
 
 	private float durationRatio;
-	
+
 	public static final AltPool<TweenParallelAction> pool = ActionPool.make(TweenParallelAction.class);
-	
-	TweenParallelAction () { } // internal
-	
+
+	TweenParallelAction() { } // internal
+
 	public static TweenParallelAction obtain(AbstractTweenAction action1, AbstractTweenAction action2) {
 		TweenParallelAction obj = pool.obtain();
-		
+
 		if (action1.duration <= action2.duration) {
 			obj.action1 = action1;
 			obj.action2 = action2;
@@ -41,48 +40,46 @@ public final class TweenParallelAction extends AbstractTweenCombinerAction {
 			obj.action2 = action1;
 		}
 		obj.duration = obj.action2.duration;
-		
+
 		obj.durationRatio = (obj.duration == 0 ? -1 : obj.action1.duration / obj.duration);
 		return obj;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		durationRatio = 0;
 	}
-	
+
 	@Override
 	public TweenParallelAction reversed() {
-		TweenParallelAction action;
-		
+		TweenParallelAction reversed;
+
 		if (action1.duration == action2.duration) {
-			action = obtain(action1.reversed(), action2.reversed());
+			reversed = obtain(action1.reversed(), action2.reversed());
 		} else {
-			action = obtain(
+			reversed = obtain(
 					Actions.tpaddedLeft(action1.reversed(), action2.duration - action1.duration),
 					action2.reversed());
 		}
-		
-		action.ease(easing.reversed());
-		return action;
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
-	
+
 	@Override
 	public float getDuration() {
 		return Math.max(action1.getDuration(), action2.getDuration());
 	}
-	
+
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-		
+	protected void doPin() {
 		action1.pin();
 		action2.pin();
-		isPinned = true;
 	}
-	
+
 	@Override
 	protected void applyRatio(float ratio) {
 		if (ratio == 0) {

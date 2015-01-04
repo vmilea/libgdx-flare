@@ -19,7 +19,6 @@ package com.vmilea.gdx.flare;
 import com.vmilea.gdx.flare.Actions.IdempotentDelegate;
 import com.vmilea.gdx.flare.tween.AbstractTweenAction;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 
 // Expected to have the same effect every time it runs. May be restarted & reversed.
 //
@@ -28,58 +27,58 @@ public final class IdempotentAction extends AbstractTweenAction {
 	private IdempotentDelegate delegate;
 	private Object data;
 	private boolean skipWhilePinning;
-	
+
 	public static final AltPool<IdempotentAction> pool = ActionPool.make(IdempotentAction.class);
-	
-	IdempotentAction () { } // internal
-	
+
+	IdempotentAction() { } // internal
+
 	public static IdempotentAction obtain(IdempotentDelegate delegate, Object data) {
 		IdempotentAction obj = pool.obtain();
 		obj.delegate = delegate;
 		obj.data = data;
 		return obj;
 	}
-	
+
 	public IdempotentAction skipWhilePinning() {
 		skipWhilePinning = true;
 		return this;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
 		delegate = null;
 		data = null;
 	}
-	
+
 	@Override
 	public boolean isReversible() {
 		return true;
 	}
-	
+
 	@Override
 	public IdempotentAction reversed() {
-		return obtain(delegate, data);
+		IdempotentAction reversed = obtain(delegate, data);
+
+		reversed.target = target;
+		return reversed;
 	}
-	
+
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-		
-		isPinned = true;
+	protected void doPin() {
 	}
-	
+
 	@Override
 	protected void applyRatio(float ratio) {
 		delegate.run(target, data);
 	}
-	
+
 	@Override
 	protected void pinPush() {
 		if (!skipWhilePinning)
 			super.pinPush();
 	}
-	
+
 	@Override
 	protected void pinPop() {
 		if (!skipWhilePinning)

@@ -25,7 +25,7 @@ import com.vmilea.util.StateCheck;
 public class TweenFloatPairToAction extends AbstractTweenAction {
 
 	protected FloatPairActorProperty property;
-	
+
 	protected float a1, b1;
 	protected float a0 = Float.NaN, b0 = Float.NaN;
 
@@ -45,17 +45,17 @@ public class TweenFloatPairToAction extends AbstractTweenAction {
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		property = null;
 		a1 = b1 = 0;
 		a0 = Float.NaN;
 		b0 = Float.NaN;
 	}
-	
+
 	@Override
 	public void restore() {
 		super.restore();
-		
+
 		a0 = Float.NaN;
 		b0 = Float.NaN;
 	}
@@ -70,19 +70,19 @@ public class TweenFloatPairToAction extends AbstractTweenAction {
 		if (!isReversible())
 			StateCheck.fail("%s can't be reversed unless pinned", getClass().getSimpleName());
 
-		TweenFloatPairToAction action = obtain(property, a0, b0, duration);
-		action.ease(easing.reversed());
-		return action;
+		TweenFloatPairToAction reversed = obtain(property, a0, b0, duration);
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
+	protected void doPin() {
 		Assert.check(Float.isNaN(a0) && Float.isNaN(b0));
-		
+
 		a0 = property.getA(target);
 		b0 = property.getB(target);
-		isPinned = true;
 	}
 
 	@Override

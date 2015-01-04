@@ -18,17 +18,16 @@ package com.vmilea.gdx.flare.tween;
 
 import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 
 public final class PaddingAction extends AbstractTweenAction {
 
 	private AbstractTweenAction action; // not owned
 	private float fixedRatio;
-	
+
 	public static final AltPool<PaddingAction> pool = ActionPool.make(PaddingAction.class);
-	
-	PaddingAction () { } // internal
-	
+
+	PaddingAction() { } // internal
+
 	public static PaddingAction obtain(AbstractTweenAction action, float fixedRatio, float duration) {
 		PaddingAction obj = pool.obtain();
 		obj.action = action;
@@ -36,7 +35,7 @@ public final class PaddingAction extends AbstractTweenAction {
 		obj.duration = duration;
 		return obj;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
@@ -48,19 +47,16 @@ public final class PaddingAction extends AbstractTweenAction {
 	public boolean isReversible() {
 		return true;
 	}
-	
+
 	@Override
 	public PaddingAction reversed() {
 		return obtain(action, fixedRatio, duration);
 	}
-	
+
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-		
-		isPinned = true;
+	protected void doPin() {
 	}
-	
+
 	@Override
 	protected void applyRatio(float ratio) {
 		action.applyRatio(fixedRatio);

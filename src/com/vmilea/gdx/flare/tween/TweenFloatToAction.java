@@ -67,18 +67,18 @@ public class TweenFloatToAction extends AbstractTweenAction {
 		if (!isReversible())
 			StateCheck.fail("%s can't be reversed unless pinned", getClass().getSimpleName());
 
-		TweenFloatToAction action = obtain(property, value0, duration);
-		action.ease(easing.reversed());
-		return action;
+		TweenFloatToAction reversed = obtain(property, value0, duration);
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
+	protected void doPin() {
 		Assert.check(Float.isNaN(value0));
 
 		value0 = property.get(target);
-		isPinned = true;
 	}
 
 	@Override

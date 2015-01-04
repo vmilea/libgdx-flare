@@ -30,7 +30,7 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 	// used to detect if the action has been recycled while running
 	protected int poolItemIncarnation = 1;
 
-	public abstract void pin();
+	protected abstract void doPin();
 
 	protected abstract float doRun(float dt);
 
@@ -77,6 +77,14 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 		return this;
 	}
 
+	public void pin() {
+		if (isPinned)
+			StateCheck.fail("%s is already pinned", getClass().getSimpleName());
+
+		doPin();
+		isPinned = true;
+	}
+
 	public AbstractAction startOn(Actor actor) {
 		if (this.actor != null)
 			ArgCheck.fail("%s already bound to an actor", getClass().getSimpleName());
@@ -88,11 +96,11 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 		return this;
 	}
 
-	public void skipToEnd(boolean removeFromActor) {
-		skipToEnd(0.2f, removeFromActor);
+	public AbstractAction skipToEnd(boolean removeFromActor) {
+		return skipToEnd(0.2f, removeFromActor);
 	}
 
-	public void skipToEnd(float dtPerStep, boolean removeFromActor) {
+	public AbstractAction skipToEnd(float dtPerStep, boolean removeFromActor) {
 		int incarnation = poolItemIncarnation;
 
 		// act until done; won't work for perpetual actions!
@@ -101,6 +109,8 @@ public abstract class AbstractAction extends com.badlogic.gdx.scenes.scene2d.Act
 
 		if (incarnation == poolItemIncarnation && removeFromActor)
 			actor.removeAction(this);
+
+		return this;
 	}
 
 	public boolean isDone() {

@@ -26,11 +26,11 @@ public class TweenFloatPairByAction extends AbstractTweenAction {
 	protected FloatPairActorProperty property;
 	protected float aDelta, bDelta;
 	protected float a0 = Float.NaN, b0 = Float.NaN;
-	
+
 	public static final AltPool<TweenFloatPairByAction> pool = ActionPool.make(TweenFloatPairByAction.class);
-	
-	TweenFloatPairByAction () { } // internal
-	
+
+	TweenFloatPairByAction() { } // internal
+
 	public static TweenFloatPairByAction obtain(FloatPairActorProperty property, float aDelta, float bDelta, float duration) {
 		TweenFloatPairByAction obj = pool.obtain();
 		obj.property = property;
@@ -39,48 +39,48 @@ public class TweenFloatPairByAction extends AbstractTweenAction {
 		obj.duration = duration;
 		return obj;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		property = null;
 		aDelta = 0;
 		bDelta = 0;
 		a0 = Float.NaN;
 		b0 = Float.NaN;
 	}
-	
+
 	@Override
 	public void restore() {
 		super.restore();
-		
+
 		a0 = Float.NaN;
 		b0 = Float.NaN;
 	}
-	
+
 	@Override
 	public boolean isReversible() {
 		return true;
 	}
-	
+
 	@Override
 	public TweenFloatPairByAction reversed() {
-		TweenFloatPairByAction action = obtain(property, -aDelta, -bDelta, duration);
-		action.ease(easing.reversed());
-		return action;
+		TweenFloatPairByAction reversed = obtain(property, -aDelta, -bDelta, duration);
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
-	
+
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
+	protected void doPin() {
 		Assert.check(Float.isNaN(a0) && Float.isNaN(b0));
-		
+
 		a0 = property.getA(target);
 		b0 = property.getB(target);
-		isPinned = true;
 	}
-	
+
 	@Override
 	protected void applyRatio(float ratio) {
 		property.set(target,

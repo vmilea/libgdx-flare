@@ -18,7 +18,6 @@ package com.vmilea.gdx.flare.tween;
 
 import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 import com.vmilea.util.ArgCheck;
 
 public final class ScaleByFactorAction extends AbstractTweenAction {
@@ -64,20 +63,19 @@ public final class ScaleByFactorAction extends AbstractTweenAction {
 
 	@Override
 	public ScaleByFactorAction reversed() {
-		ScaleByFactorAction action = obtain(1 / xFactor, 1 / yFactor, duration);
-		action.ease(easing.reversed());
-		return action;
+		ScaleByFactorAction reversed = obtain(1 / xFactor, 1 / yFactor, duration);
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-
+	protected void doPin() {
 		scaleX0 = target.getScaleX();
 		scaleY0 = target.getScaleY();
 		deltaScaleX = scaleX0 * (xFactor - 1);
 		deltaScaleY = scaleY0 * (yFactor - 1);
-		isPinned = true;
 	}
 
 	@Override

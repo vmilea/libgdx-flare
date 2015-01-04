@@ -61,16 +61,13 @@ public final class LazyAction extends AbstractAction {
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
+	protected void doPin() {
 		Assert.check(action == null);
 
 		action = generator.call(data);
 		// keep the action's target, start it on our actor
 		action.setActor(getActor());
 		action.restart();
-
-		isPinned = true;
 	}
 
 	@Override

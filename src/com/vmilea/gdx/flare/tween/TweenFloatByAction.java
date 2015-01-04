@@ -26,11 +26,11 @@ public class TweenFloatByAction extends AbstractTweenAction {
 	protected FloatActorProperty property;
 	protected float delta;
 	protected float value0 = Float.NaN;
-	
+
 	public static final AltPool<TweenFloatByAction> pool = ActionPool.make(TweenFloatByAction.class);
-	
-	TweenFloatByAction () { } // internal
-	
+
+	TweenFloatByAction() { } // internal
+
 	public static TweenFloatByAction obtain(FloatActorProperty property, float delta, float duration) {
 		TweenFloatByAction obj = pool.obtain();
 		obj.property = property;
@@ -38,44 +38,44 @@ public class TweenFloatByAction extends AbstractTweenAction {
 		obj.duration = duration;
 		return obj;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		property = null;
 		delta = 0;
 		value0 = Float.NaN;
 	}
-	
+
 	@Override
 	public void restore() {
 		super.restore();
-		
+
 		value0 = Float.NaN;
 	}
-	
+
 	@Override
 	public boolean isReversible() {
 		return true;
 	}
-	
+
 	@Override
 	public TweenFloatByAction reversed() {
-		TweenFloatByAction action = obtain(property, -delta, duration);
-		action.ease(easing.reversed());
-		return action;
+		TweenFloatByAction reversed = obtain(property, -delta, duration);
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
-	
+
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
+	protected void doPin() {
 		Assert.check(Float.isNaN(value0));
-		
+
 		value0 = property.get(target);
-		isPinned = true;
 	}
-	
+
 	@Override
 	protected void applyRatio(float ratio) {
 		property.set(target, value0 + ratio * delta);

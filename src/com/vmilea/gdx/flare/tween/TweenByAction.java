@@ -26,15 +26,15 @@ public class TweenByAction extends AbstractTweenAction {
 
 	@SuppressWarnings("rawtypes")
 	protected InterpolatableActorProperty property;
-	
+
 	protected Object delta;
 	protected Object value0 = null;
 	protected boolean negateDelta;
-	
+
 	public static final AltPool<TweenByAction> pool = ActionPool.make(TweenByAction.class);
-	
-	TweenByAction () { } // internal
-	
+
+	TweenByAction() { } // internal
+
 	public static <T> TweenByAction obtain(InterpolatableActorProperty<T> property, T delta, boolean negateDelta, float duration) {
 		TweenByAction obj = pool.obtain();
 		obj.property = property;
@@ -43,11 +43,11 @@ public class TweenByAction extends AbstractTweenAction {
 		obj.duration = duration;
 		return obj;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		property.recycle(delta);
 		property.recycle(value0);
 		property = null;
@@ -55,35 +55,35 @@ public class TweenByAction extends AbstractTweenAction {
 		negateDelta = false;
 		value0 = null;
 	}
-	
+
 	@Override
 	public void restore() {
 		super.restore();
-		
+
 		value0 = null;
 	}
-	
+
 	@Override
 	public boolean isReversible() {
 		return true;
 	}
-	
+
 	@Override
 	public TweenByAction reversed() {
-		TweenByAction action = obtain(property, delta, !negateDelta, duration);
-		action.ease(easing.reversed());
-		return action;
+		TweenByAction reversed = obtain(property, delta, !negateDelta, duration);
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
-	
+
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
+	protected void doPin() {
 		Assert.check(value0 == null);
-		
+
 		value0 = property.obtain(property.get(target));
-		isPinned = true;
 	}
-	
+
 	@Override
 	protected void applyRatio(float ratio) {
 		property.setRelative(target, value0, delta, (negateDelta ? -ratio : ratio));

@@ -18,7 +18,6 @@ package com.vmilea.gdx.flare;
 
 import com.badlogic.gdx.utils.Predicate;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 
 public final class DelayUntilAction<T> extends AbstractAction {
 
@@ -61,10 +60,7 @@ public final class DelayUntilAction<T> extends AbstractAction {
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-
-		isPinned = true;
+	protected void doPin() {
 	}
 
 	@Override

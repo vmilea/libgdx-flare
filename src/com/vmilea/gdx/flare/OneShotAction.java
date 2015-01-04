@@ -19,7 +19,6 @@ package com.vmilea.gdx.flare;
 import com.vmilea.gdx.flare.Actions.Delegate;
 import com.vmilea.gdx.pool.AltPool;
 import com.vmilea.gdx.pool.PoolItem;
-import com.vmilea.util.Assert;
 
 // Runs once, then disposes the delegate.
 //
@@ -27,22 +26,22 @@ public final class OneShotAction extends AbstractAction {
 
 	private Delegate delegate;
 	private Object data;
-	
+
 	public static final AltPool<OneShotAction> pool = ActionPool.make(OneShotAction.class);
-	
-	OneShotAction () { } // internal
-	
+
+	OneShotAction() { } // internal
+
 	public static OneShotAction obtain(Delegate delegate, Object data) {
 		OneShotAction obj = pool.obtain();
 		obj.delegate = delegate;
 		obj.data = data;
 		return obj;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		// recycle delegate here in case action wasn't run
 		if (delegate instanceof PoolItem)
 			((PoolItem) delegate).recycle();
@@ -50,7 +49,7 @@ public final class OneShotAction extends AbstractAction {
 		delegate = null;
 		data = null;
 	}
-	
+
 	@Override
 	public void restore() {
 		if (delegate == null)
@@ -58,32 +57,30 @@ public final class OneShotAction extends AbstractAction {
 
 		super.restore();
 	}
-	
+
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-		
-		isPinned = true;		
+	protected void doPin() {
+
 	}
-	
+
 	@Override
 	public float getDuration() {
 		return 0;
 	}
-	
+
 	@Override
 	protected boolean supportsRemoveWhileRunning() {
 		return true;
 	}
-	
+
 	@Override
 	protected float doRun(float dt) {
 		delegate.run(target, data);
-		
+
 		if (delegate instanceof PoolItem)
 			((PoolItem) delegate).recycle();
 		delegate = null;
-		
+
 		isDone = true;
 		return dt;
 	}

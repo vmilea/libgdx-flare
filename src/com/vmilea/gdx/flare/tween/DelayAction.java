@@ -18,7 +18,6 @@ package com.vmilea.gdx.flare.tween;
 
 import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 
 public final class DelayAction extends AbstractTweenAction {
 
@@ -43,10 +42,7 @@ public final class DelayAction extends AbstractTweenAction {
 	}
 	
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-		
-		isPinned = true;
+	protected void doPin() {
 	}
 	
 	@Override

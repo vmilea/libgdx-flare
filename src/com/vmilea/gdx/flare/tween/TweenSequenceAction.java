@@ -18,7 +18,6 @@ package com.vmilea.gdx.flare.tween;
 
 import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 
 public final class TweenSequenceAction extends AbstractTweenCombinerAction {
 
@@ -58,9 +57,11 @@ public final class TweenSequenceAction extends AbstractTweenCombinerAction {
 
 	@Override
 	public TweenSequenceAction reversed() {
-		TweenSequenceAction action = obtain(action2.reversed(), action1.reversed());
-		action.ease(easing.reversed());
-		return action;
+		TweenSequenceAction reversed = obtain(action2.reversed(), action1.reversed());
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
 
 	@Override
@@ -69,14 +70,11 @@ public final class TweenSequenceAction extends AbstractTweenCombinerAction {
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-
+	protected void doPin() {
 		action1.pin();
 		action1.pinPush();
 		action2.pin();
 		action1.pinPop();
-		isPinned = true;
 	}
 
 	@Override

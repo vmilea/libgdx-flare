@@ -74,7 +74,7 @@ public abstract class AbstractTweenAction extends AbstractAction {
 	}
 
 	@Override
-	public void skipToEnd(boolean removeFromActor) {
+	public AbstractTweenAction skipToEnd(boolean removeFromActor) {
 		int incarnation = poolItemIncarnation;
 		seek(1);
 		Assert.check(incarnation == poolItemIncarnation);
@@ -82,11 +82,13 @@ public abstract class AbstractTweenAction extends AbstractAction {
 
 		if (removeFromActor)
 			actor.removeAction(this);
+
+		return this;
 	}
 
 	@Override
-	public void skipToEnd(float dtPerStep, boolean removeFromActor) {
-		skipToEnd(removeFromActor);
+	public AbstractTweenAction skipToEnd(float dtPerStep, boolean removeFromActor) {
+		return skipToEnd(removeFromActor);
 	}
 
 	@Override

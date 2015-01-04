@@ -17,7 +17,6 @@
 package com.vmilea.gdx.flare;
 
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 
 public final class ParallelAction extends AbstractGroupAction {
 
@@ -41,12 +40,12 @@ public final class ParallelAction extends AbstractGroupAction {
 		super.addAll(actions);
 		return this;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
 	}
-	
+
 	@Override
 	public void restore() {
 		super.restore();
@@ -56,14 +55,16 @@ public final class ParallelAction extends AbstractGroupAction {
 	public ParallelAction reversed() {
 		// assumes all actions have the same duration!
 		ParallelAction reversed = obtain();
-		
+
 		reversed.actions.ensureCapacity(actions.size);
-		for (int i = 0; i <= actions.size; i++) {
+		for (int i = 0; i < actions.size; i++) {
 			reversed.actions.add(actions.get(i).reversed());
 		}
+
+		reversed.target = target;
 		return reversed;
 	}
-	
+
 	@Override
 	public float getDuration() {
 		float duration = 0;
@@ -74,13 +75,10 @@ public final class ParallelAction extends AbstractGroupAction {
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-		
+	protected void doPin() {
 		for (AbstractAction action : actions) {
 			action.pin();
 		}
-		isPinned = true;
 	}
 
 	@Override

@@ -70,18 +70,18 @@ public class TweenToAction extends AbstractTweenAction {
 		if (!isReversible())
 			StateCheck.fail("%s can't be reversed unless pinned", getClass().getSimpleName());
 
-		TweenToAction action = obtain(property, value0, duration);
-		action.ease(easing.reversed());
-		return action;
+		TweenToAction reversed = obtain(property, value0, duration);
+
+		reversed.target = target;
+		reversed.ease(easing.reversed());
+		return reversed;
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
+	protected void doPin() {
 		Assert.check(value0 == null);
 
 		value0 = property.obtain(property.get(target));
-		isPinned = true;
 	}
 
 	@Override

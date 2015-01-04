@@ -60,16 +60,16 @@ public final class EaseAction extends AbstractWrapperAction {
 	}
 
 	@Override
-	public void pin() {
-		super.pin();
-
-		Assert.check(Float.isNaN(duration));
-		duration = action.getDuration();
+	public float getDuration() {
+		return duration;
 	}
 
 	@Override
-	public float getDuration() {
-		return duration;
+	protected void doPin() {
+		super.doPin();
+
+		Assert.check(Float.isNaN(duration));
+		duration = action.getDuration();
 	}
 
 	@Override

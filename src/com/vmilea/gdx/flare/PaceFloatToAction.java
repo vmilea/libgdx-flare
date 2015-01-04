@@ -18,7 +18,6 @@ package com.vmilea.gdx.flare;
 
 import com.vmilea.gdx.flare.actor.FloatActorProperty;
 import com.vmilea.gdx.pool.AltPool;
-import com.vmilea.util.Assert;
 import com.vmilea.util.ArgCheck;
 import com.vmilea.util.StateCheck;
 
@@ -56,7 +55,7 @@ public final class PaceFloatToAction extends AbstractAction {
 	@Override
 	public void reset() {
 		super.reset();
-		
+
 		property = null;
 		speed = 0;
 		value1 = 0;
@@ -77,10 +76,7 @@ public final class PaceFloatToAction extends AbstractAction {
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-
-		isPinned = true;
+	protected void doPin() {
 	}
 
 	@Override

@@ -17,7 +17,6 @@
 package com.vmilea.gdx.flare;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.vmilea.util.Assert;
 
 abstract class AbstractWrapperAction extends AbstractAction { // internal
 
@@ -57,10 +56,7 @@ abstract class AbstractWrapperAction extends AbstractAction { // internal
 	}
 
 	@Override
-	public void pin() {
-		Assert.check(!isPinned);
-
+	protected void doPin() {
 		action.pin();
-		isPinned = true;
 	}
 }
