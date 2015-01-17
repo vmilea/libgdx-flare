@@ -17,80 +17,87 @@
 package com.vmilea.gdx.flare;
 
 import com.vmilea.gdx.pool.AltPool;
+import com.vmilea.util.ArgCheck;
 
 public final class RepeatAction extends AbstractWrapperAction {
 
-	private int currentCycle, totalCycles;
+	private int repeatCycle, repeatLimit;
 	private boolean isInterrupted;
-	
+
 	public static final AltPool<RepeatAction> pool = ActionPool.make(RepeatAction.class);
-	
-	RepeatAction () { } // internal
-	
-	public static RepeatAction obtain(AbstractAction action, int repeatCount) {
+
+	RepeatAction() { } // internal
+
+	public static RepeatAction obtain(AbstractAction action, int repeatLimit) {
+		ArgCheck.check(repeatLimit > 0, "Repeat limit must be greater than 0");
+
 		RepeatAction obj = pool.obtain();
 		obj.action = action;
-		obj.totalCycles = repeatCount;
+		obj.repeatLimit = repeatLimit;
 		return obj;
 	}
-	
+
+	public void setRepeatLimit(int repeatLimit) {
+		ArgCheck.check(repeatLimit > 0, "Repeat limit must be greater than 0");
+
+		this.repeatLimit = repeatLimit;
+	}
+
 	public void interrupt() {
 		isInterrupted = true;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
-		
-		currentCycle = 0;
-		totalCycles = 0;
+
+		repeatCycle = 0;
+		repeatLimit = 0;
 		isInterrupted = false;
 	}
-	
+
 	@Override
 	public void restore() {
 		super.restore();
-		
-		currentCycle = 0;
+
+		repeatCycle = 0;
 		isInterrupted = false;
 	}
-	
+
 	@Override
 	public float getDuration() {
-		return totalCycles * action.getDuration();
+		return repeatLimit * action.getDuration();
 	}
-	
+
 	@Override
 	protected float doRun(float dt) {
-		if (isInterrupted || currentCycle == totalCycles) {
-			isDone = true;
-			return dt;
-		}
-		
-		dt = action.run(dt);
-		
 		if (isInterrupted) {
 			isDone = true;
 			return dt;
 		}
-		
+
+		dt = action.run(dt);
+
+		if (isInterrupted) {
+			isDone = true;
+			return dt;
+		}
+
 		while (action.isDone()) {
-			action.restart();
-			currentCycle++;
-			
-			if (currentCycle == totalCycles) {
+			if (++repeatCycle >= repeatLimit) {
 				isDone = true;
 				return dt;
 			}
-			
+
+			action.restart();
 			dt = action.run(dt);
-						
+
 			if (isInterrupted) {
 				isDone = true;
 				return dt;
 			}
 		}
-		
+
 		return 0;
 	}
 }
