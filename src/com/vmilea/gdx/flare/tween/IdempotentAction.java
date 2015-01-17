@@ -14,10 +14,10 @@
  * limitations under the License.
  ******************************************************************************/
 
-package com.vmilea.gdx.flare;
+package com.vmilea.gdx.flare.tween;
 
+import com.vmilea.gdx.flare.ActionPool;
 import com.vmilea.gdx.flare.Actions.IdempotentDelegate;
-import com.vmilea.gdx.flare.tween.AbstractTweenAction;
 import com.vmilea.gdx.pool.AltPool;
 
 // Expected to have the same effect every time it runs. May be restarted & reversed.

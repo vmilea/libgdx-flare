@@ -16,29 +16,34 @@
 
 package com.vmilea.gdx.flare.tween;
 
+import com.badlogic.gdx.utils.FloatArray;
 import com.vmilea.gdx.flare.ActionPool;
-import com.vmilea.gdx.flare.actor.InterpolatableActorProperty;
+import com.vmilea.gdx.flare.Actions;
+import com.vmilea.gdx.flare.actor.ComplexActorProperty;
 import com.vmilea.gdx.pool.AltPool;
 import com.vmilea.util.Assert;
 import com.vmilea.util.StateCheck;
 
-@SuppressWarnings("unchecked")
-public class TweenToAction extends AbstractTweenAction {
+public final class TweenToAction extends AbstractTweenAction {
 
-	@SuppressWarnings("rawtypes")
-	protected InterpolatableActorProperty property;
-
-	protected Object value1;
-	protected Object value0 = null;
+	private ComplexActorProperty property;
+	private final FloatArray value1 = new FloatArray(4);
+	private final FloatArray value0 = new FloatArray(4);
 
 	public static final AltPool<TweenToAction> pool = ActionPool.make(TweenToAction.class);
 
 	TweenToAction() { } // internal
 
-	public static <T> TweenToAction obtain(InterpolatableActorProperty<T> property, T value1, float duration) {
+	public static TweenToAction obtain(ComplexActorProperty property, float[] value1, float duration) {
 		TweenToAction obj = pool.obtain();
 		obj.property = property;
-		obj.value1 = property.obtain(value1);
+
+		int count = property.getCount();
+		obj.value1.ensureCapacity(count);
+		System.arraycopy(value1, 0, obj.value1.items, 0, count);
+		obj.value0.ensureCapacity(count);
+		Actions.tmpFloatArray.ensureCapacity(count - Actions.tmpFloatArray.size);
+
 		obj.duration = duration;
 		return obj;
 	}
@@ -46,18 +51,17 @@ public class TweenToAction extends AbstractTweenAction {
 	@Override
 	public void reset() {
 		super.reset();
-		property.recycle(value1);
-		property.recycle(value0);
+
 		property = null;
-		value1 = null;
-		value0 = null;
+		value1.size = 0;
+		value0.size = 0;
 	}
 
 	@Override
 	public void restore() {
 		super.restore();
-		property.recycle(value0);
-		value0 = null;
+
+		value0.size = 0;
 	}
 
 	@Override
@@ -70,7 +74,7 @@ public class TweenToAction extends AbstractTweenAction {
 		if (!isReversible())
 			StateCheck.fail("%s can't be reversed unless pinned", getClass().getSimpleName());
 
-		TweenToAction reversed = obtain(property, value0, duration);
+		TweenToAction reversed = obtain(property, value0.items, duration);
 
 		reversed.target = target;
 		reversed.ease(easing.reversed());
@@ -79,13 +83,19 @@ public class TweenToAction extends AbstractTweenAction {
 
 	@Override
 	protected void doPin() {
-		Assert.check(value0 == null);
+		Assert.check(value0.size == 0);
 
-		value0 = property.obtain(property.get(target));
+		property.get(target, value0.items);
+		value0.size = property.getCount();
 	}
 
 	@Override
 	protected void applyRatio(float ratio) {
-		property.setBetween(target, value0, value1, ratio);
+		float[] tmpItems = Actions.tmpFloatArray.items;
+		for (int i = 0, n = property.getCount(); i < n; i++) {
+			tmpItems[i] = (1 - ratio) * value0.items[i] + ratio * value1.items[i];
+		}
+
+		property.set(target, tmpItems);
 	}
 }

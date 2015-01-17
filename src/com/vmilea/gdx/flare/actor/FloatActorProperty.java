@@ -18,9 +18,9 @@ package com.vmilea.gdx.flare.actor;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public interface FloatActorProperty {
+public abstract class FloatActorProperty {
 
-	float get(Actor target);
+	public abstract float get(Actor target);
 
-	void set(Actor target, float value);
+	public abstract void set(Actor target, float value);
 }

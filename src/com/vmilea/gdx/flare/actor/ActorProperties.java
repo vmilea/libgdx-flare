@@ -20,10 +20,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.utils.Pools;
 
 public final class ActorProperties {
-	
+
 	//
 	// Enum actor properties
 	//
@@ -49,7 +48,7 @@ public final class ActorProperties {
 			target.setVisible(value == Boolean.TRUE);
 		}
 	};
-	
+
 	//
 	// Float actor properties
 	//
@@ -75,7 +74,7 @@ public final class ActorProperties {
 			target.setY(value);
 		}
 	};
-	
+
 	public static final FloatActorProperty centerX = new FloatActorProperty() {
 
 		public float get(Actor target) {
@@ -196,124 +195,111 @@ public final class ActorProperties {
 			target.getColor().b = value;
 		}
 	};
-	
+
 	//
 	// FloatPair actor properties
 	//
-	
+
 	public static final FloatPairActorProperty position = new FloatPairActorProperty() {
-		
+
 		public float getA(Actor target) {
 			return target.getX();
 		}
-		
+
 		public float getB(Actor target) {
 			return target.getY();
 		}
-		
+
 		public void set(Actor target, float a, float b) {
 			target.setPosition(a, b);
 		}
 	};
-	
+
 	public static final FloatPairActorProperty centerPosition = new FloatPairActorProperty() {
-		
+
 		public float getA(Actor target) {
 			return target.getX(Align.center);
 		}
-		
+
 		public float getB(Actor target) {
 			return target.getY(Align.center);
 		}
-		
+
 		public void set(Actor target, float a, float b) {
 			target.setPosition(a, b, Align.center);
 		}
 	};
-	
+
 	public static final FloatPairActorProperty size = new FloatPairActorProperty() {
-		
+
 		public float getA(Actor target) {
 			return target.getWidth();
 		}
-		
+
 		public float getB(Actor target) {
 			return target.getHeight();
 		}
-		
+
 		public void set(Actor target, float a, float b) {
 			target.setSize(a, b);
 		}
 	};
-	
+
 	public static final FloatPairActorProperty scale = new FloatPairActorProperty() {
-		
+
 		public float getA(Actor target) {
 			return target.getScaleX();
 		}
-		
+
 		public float getB(Actor target) {
 			return target.getScaleY();
 		}
-		
+
 		public void set(Actor target, float a, float b) {
 			target.setScale(a, b);
 		}
 	};
-	
+
 	//
 	// complex actor properties
 	//
 
-	public static final InterpolatableActorProperty<Color> color = new InterpolatableActorProperty<Color>() {
+	public static final class ColorProperty extends ComplexActorProperty {
 
-		public Color get(Actor target) {
-			return target.getColor();
+		@Override
+		public int getCount() {
+			return 4;
 		}
 
-		public void set(Actor target, Color value) {
-			target.setColor(value);
+		@Override
+		public void get(Actor target, float[] output) {
+			get(target.getColor(), output);
 		}
 
-		public void setBetween(Actor target, Color value0, Color value1, float ratio) {
-			Color out = get(target);
-
-			out.r = value0.r + ratio * (value1.r - value0.r);
-			out.g = value0.g + ratio * (value1.g - value0.g);
-			out.b = value0.b + ratio * (value1.b - value0.b);
-			out.a = value0.a + ratio * (value1.a - value0.a);
-			out.clamp();
+		@Override
+		public void set(Actor target, float[] input) {
+			Color color = target.getColor();
+			color.r = input[0];
+			color.g = input[1];
+			color.b = input[2];
+			color.a = input[3];
+			color.clamp();
 		}
 
-		public void setRelative(Actor target, Color value0, Color delta, float ratio) {
-			Color out = get(target);
-
-			out.r = value0.r + ratio * delta.r;
-			out.g = value0.g + ratio * delta.g;
-			out.b = value0.b + ratio * delta.b;
-			out.a = value0.a + ratio * delta.a;
-			out.clamp();
-		}
-
-		public Color obtain(Color prototype) {
-			Color color = Pools.get(Color.class).obtain();
-
-			if (prototype != null)
-				color.set(prototype);
-
-			return color;
-		}
-
-		public void recycle(Color value) {
-			if (value != null)
-				Pools.get(Color.class).free(value);
+		public void get(Color color, float[] output) {
+			output[0] = color.r;
+			output[1] = color.g;
+			output[2] = color.b;
+			output[3] = color.a;
 		}
 	};
-	
+
+	public static final ColorProperty color = new ColorProperty();
+
 	//
 	// private members
 	//
-	
+
 	private ActorProperties() {
 	}
 }

@@ -21,11 +21,11 @@ import com.vmilea.gdx.flare.actor.FloatPairActorProperty;
 import com.vmilea.gdx.pool.AltPool;
 import com.vmilea.util.Assert;
 
-public class TweenFloatPairByAction extends AbstractTweenAction {
+public final class TweenFloatPairByAction extends AbstractTweenAction {
 
-	protected FloatPairActorProperty property;
-	protected float aDelta, bDelta;
-	protected float a0 = Float.NaN, b0 = Float.NaN;
+	private FloatPairActorProperty property;
+	private float aDelta, bDelta;
+	private float a0 = Float.NaN, b0 = Float.NaN;
 
 	public static final AltPool<TweenFloatPairByAction> pool = ActionPool.make(TweenFloatPairByAction.class);
 

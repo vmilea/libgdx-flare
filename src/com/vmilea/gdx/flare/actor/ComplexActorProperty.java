@@ -17,14 +17,31 @@
 package com.vmilea.gdx.flare.actor;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.FloatArray;
+import com.vmilea.util.ArgCheck;
 
-public interface InterpolatableActorProperty<T> extends ActorProperty<T> {
+public abstract class ComplexActorProperty {
 
-	void setBetween(Actor actor, T value0, T value1, float ratio);
+	public abstract int getCount();
 
-	void setRelative(Actor actor, T value0, T delta, float ratio);
+	public abstract void get(Actor target, float[] output);
 
-	T obtain(T prototype);
+	public abstract void set(Actor target, float[] input);
 
-	void recycle(T value);
+	public final void get(Actor target, FloatArray output) {
+		int count = getCount();
+		if (output.size != count) {
+			output.size = 0;
+			output.ensureCapacity(count);
+			output.size = count;
+		}
+
+		get(target, output.items);
+	}
+
+	public final void set(Actor target, FloatArray input) {
+		ArgCheck.check(input.size == getCount(), "Input array has wrong size");
+
+		set(target, input.items);
+	}
 }

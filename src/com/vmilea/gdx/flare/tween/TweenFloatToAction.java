@@ -22,12 +22,11 @@ import com.vmilea.gdx.pool.AltPool;
 import com.vmilea.util.Assert;
 import com.vmilea.util.StateCheck;
 
-public class TweenFloatToAction extends AbstractTweenAction {
+public final class TweenFloatToAction extends AbstractTweenAction {
 
-	protected FloatActorProperty property;
-
-	protected float value1;
-	protected float value0 = Float.NaN;
+	private FloatActorProperty property;
+	private float value1;
+	private float value0 = Float.NaN;
 
 	public static final AltPool<TweenFloatToAction> pool = ActionPool.make(TweenFloatToAction.class);
 

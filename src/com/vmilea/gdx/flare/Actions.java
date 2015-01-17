@@ -22,14 +22,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Predicate;
 import com.vmilea.gdx.flare.actor.ActorProperties;
+import com.vmilea.gdx.flare.actor.ComplexActorProperty;
 import com.vmilea.gdx.flare.actor.FloatActorProperty;
 import com.vmilea.gdx.flare.actor.FloatPairActorProperty;
-import com.vmilea.gdx.flare.actor.InterpolatableActorProperty;
 import com.vmilea.gdx.flare.tween.AbstractTweenAction;
 import com.vmilea.gdx.flare.tween.DelayAction;
 import com.vmilea.gdx.flare.tween.Easing;
+import com.vmilea.gdx.flare.tween.IdempotentAction;
 import com.vmilea.gdx.flare.tween.PaddingAction;
 import com.vmilea.gdx.flare.tween.ScaleByFactorAction;
 import com.vmilea.gdx.flare.tween.TweenByAction;
@@ -99,8 +101,8 @@ public final class Actions {
 		return TweenFloatPairByAction.obtain(property, aDelta, bDelta, duration);
 	}
 
-	public static <T> TweenByAction tweenBy(InterpolatableActorProperty<T> property, T delta, boolean negateDelta, float duration) {
-		return TweenByAction.obtain(property, delta, negateDelta, duration);
+	public static TweenByAction tweenBy(ComplexActorProperty property, float[] delta, float duration) {
+		return TweenByAction.obtain(property, delta, duration);
 	}
 
 	public static TweenFloatByAction moveXBy(float xDelta, float duration) {
@@ -160,19 +162,25 @@ public final class Actions {
 	}
 
 	public static TweenByAction increaseColorBy(Color delta, float duration) {
-		return tweenBy(ActorProperties.color, delta, false, duration);
+		ActorProperties.color.get(delta, tmpFloatArray.items);
+		return tweenBy(ActorProperties.color, tmpFloatArray.items, duration);
 	}
 
 	public static TweenByAction increaseColorBy(float deltaR, float deltaG, float deltaB, float deltaA, float duration) {
-		return increaseColorBy(color0.set(deltaR, deltaG, deltaB, deltaA), duration);
+		return increaseColorBy(tmpColor.set(deltaR, deltaG, deltaB, deltaA), duration);
 	}
 
 	public static TweenByAction decreaseColorBy(Color delta, float duration) {
-		return tweenBy(ActorProperties.color, delta, true, duration);
+		ActorProperties.color.get(delta, tmpFloatArray.items);
+		for (int i = 0, n = ActorProperties.color.getCount(); i < n; i++) {
+			tmpFloatArray.items[i] *= -1;
+		}
+
+		return tweenBy(ActorProperties.color, tmpFloatArray.items, duration);
 	}
 
 	public static TweenByAction decreaseColorBy(float deltaR, float deltaG, float deltaB, float deltaA, float duration) {
-		return decreaseColorBy(color0.set(deltaR, deltaG, deltaB, deltaA), duration);
+		return decreaseColorBy(tmpColor.set(deltaR, deltaG, deltaB, deltaA), duration);
 	}
 
 	// tween to
@@ -186,7 +194,7 @@ public final class Actions {
 		return TweenFloatPairToAction.obtain(property, a1, b1, duration);
 	}
 
-	public static <T> TweenToAction tweenTo(InterpolatableActorProperty<T> property, T value1, float duration) {
+	public static TweenToAction tweenTo(ComplexActorProperty property, float[] value1, float duration) {
 		return TweenToAction.obtain(property, value1, duration);
 	}
 
@@ -259,11 +267,12 @@ public final class Actions {
 	}
 
 	public static TweenToAction tweenColorTo(float r, float g, float b, float a, float duration) {
-		return tweenColorTo(color0.set(r, g, b, a), duration);
+		return tweenColorTo(tmpColor.set(r, g, b, a), duration);
 	}
 
 	public static TweenToAction tweenColorTo(Color color, float duration) {
-		return tweenTo(ActorProperties.color, color, duration);
+		ActorProperties.color.get(color, tmpFloatArray.items);
+		return tweenTo(ActorProperties.color, tmpFloatArray.items, duration);
 	}
 
 	// pace to
@@ -505,8 +514,8 @@ public final class Actions {
 		return lazy(generator, null);
 	}
 
-	public static RepeatAction repeat(AbstractAction action, int repeatCount) {
-		return RepeatAction.obtain(action, repeatCount);
+	public static RepeatAction repeat(AbstractAction action, int repeatLimit) {
+		return RepeatAction.obtain(action, repeatLimit);
 	}
 
 	public static RepeatAction repeatForever(AbstractAction action) {
@@ -528,7 +537,8 @@ public final class Actions {
 	private Actions() { // sealed
 	}
 
-	private static final Color color0 = new Color();
+	public static final Color tmpColor = new Color();
+	public static final FloatArray tmpFloatArray = new FloatArray(4);
 
 	// idempotent delegates
 
